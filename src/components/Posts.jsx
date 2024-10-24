@@ -1,67 +1,84 @@
-import React, { useState, useEffect } from "react";
-import { getPosts,deletePost } from "../services/post.api";
+import { useState, useEffect } from "react";
+import { deletePost, getPost } from "../api/PostApi";
 import Form from "./Form";
 
-const Posts = () => {
+export const Posts = () => {
   const [data, setData] = useState([]);
-  const [updatePost, setUpdatePost] = useState({});
+  const [updateDataApi, setUpdateDataApi] = useState({});
 
-  const handleDelete = async (id) => {
+  const getPostData = async () => {
+    const response = await getPost();
+    console.log(response.data);
+    setData(response.data);
+  };
+
+  const handleDeletePost = async (id) => {
     try {
       const response = await deletePost(id);
-      console.log(response);
       if (response.status === 200) {
-        setData((prevData) => prevData.filter((curElem) => curElem._id !== id));
+        const newUpdatedPosts = data.filter((curPost) => {
+          return curPost.id !== id;
+        });
+        setData(newUpdatedPosts);
+      } else {
+        console.log("Failed to delete the post : ", response.status);
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  const handleUpdate = (curElem) => {
-    setUpdatePost(curElem);
-  }
-
-  const getAllPosts = async () => {
-    try {
-      const response = await getPosts();
-      // console.log(response.data);
-      setData(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const handleUpdatePost = (curElem) => setUpdateDataApi(curElem);
 
   useEffect(() => {
-    getAllPosts();
-  }, [])
+    getPostData();
+  }, []);
 
-  return <div id="section-posts" className="w-[90%] my-4">
-    <h1 className="text-center text-3xl font-semibold text-green-600">
-      Hello Posts Page!
-    </h1>
-    <Form data={data} setData={setData} updatePost={updatePost} setUpdatePost={setUpdatePost} />
-    <ul id="section-post" className="my-2 grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-      {
-        data.map((curElem,index) => {
-          const {_id, title, body} = curElem;
-          return (
-          <li key={_id} className="bg-gray-500 rounded-md px-4 py-2">
-            <div id="section-content" className="text-white">
-              <p><b>{Number(index) + 1}.</b></p>
-              <p><b>Title: </b> {title}</p>
-              <p><b>News: </b> {body}</p>
-            </div>
-            <div id="section-btn" className="py-1">
-              <button onClick={() => handleUpdate({id:_id, title, body})} className="px-3 py-2 bg-green-400 rounded-md hover:text-white mr-2">EDIT</button>
-              <button onClick={() => handleDelete(_id)} className="px-3 py-2 bg-red-400 rounded-md hover:text-white">DELETE</button>
-            </div>
-
-          </li>)
-        })
-      }
-    </ul>
-  </div>
-}
-
-export default Posts;
+  return (
+    <>
+      <section id="section-form" className="my-4">
+        <Form
+          data={data}
+          setData={setData}
+          updateDataApi={updateDataApi}
+          setUpdateDataApi={setUpdateDataApi}
+        />
+      </section>
+      <section id="section-post" className="w-[90%] my-4">
+        <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {data.map(({ id, body, title }, idx) => {
+            return (
+              <li key={id} className="bg-gray-800 p-2 border-r-2">
+                <div id="section-content" className="text-sm text-white">
+                  <p className="py-2">{idx + 1}.</p>
+                  <p className="py-2">
+                    <b>Title:</b> {title}
+                  </p>
+                  <p className="py-2">
+                    <b>News:</b> {body}
+                  </p>
+                </div>
+                <div id="section-btn" className="flex gap-2 py-2">
+                  <button
+                    id="btn-edit"
+                    className="bg-green-600 px-2 py-1 rounded hover:text-white"
+                    onClick={() => handleUpdatePost({ id, body, title })}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    id="btn-delete"
+                    className="bg-red-600 px-2 py-1 rounded hover:text-white"
+                    onClick={() => handleDeletePost(id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    </>
+  );
+};

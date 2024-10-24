@@ -1,11 +1,13 @@
-import React from "react";
-import Posts from "./components/Posts";
+import { useEffect } from "react";
+import { Posts } from "./components/Posts";
 
 const App = () => {
-
-  return <div id="main-section" className="w-full flex justify-center items-center">
-    <Posts/>
-  </div>
+  
+  return (
+    <section id="main-section" className="flex flex-col justify-center items-center bg-black">
+      <Posts />
+    </section>
+  )
 }
 
 export default App;

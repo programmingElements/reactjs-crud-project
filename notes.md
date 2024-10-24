@@ -121,6 +121,8 @@ By using third party server like nginx, apache , httpd
 
     http://localhost:3000
 
+    http://public-url:3000
+
      
 
 
