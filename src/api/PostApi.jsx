@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://jsonplaceholder.typicode.com"
+  baseURL: "http://localhost:7662/api/v1"
 });
 
 // get method

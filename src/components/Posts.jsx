@@ -2,22 +2,24 @@ import { useState, useEffect } from "react";
 import { deletePost, getPost } from "../api/PostApi";
 import Form from "./Form";
 
-export const Posts = () => {
+const Posts = () => {
   const [data, setData] = useState([]);
   const [updateDataApi, setUpdateDataApi] = useState({});
 
   const getPostData = async () => {
-    const response = await getPost();
-    console.log(response.data);
-    setData(response.data);
+    const {data:response} = await getPost();
+    if (response.statusCode == 200) {
+      console.log(response);
+      setData(response.data);
+    }
   };
 
   const handleDeletePost = async (id) => {
     try {
-      const response = await deletePost(id);
-      if (response.status === 200) {
+      const {data:response} = await deletePost(id);
+      if (response.statusCode === 200) {
         const newUpdatedPosts = data.filter((curPost) => {
-          return curPost.id !== id;
+          return curPost._id !== id;
         });
         setData(newUpdatedPosts);
       } else {
@@ -46,9 +48,9 @@ export const Posts = () => {
       </section>
       <section id="section-post" className="w-[90%] my-4">
         <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {data.map(({ id, body, title }, idx) => {
+          {data.map(({ _id:id, body, title }, idx) => {
             return (
-              <li key={id} className="bg-gray-800 p-2 border-r-2">
+              <li key={id} className="bg-gray-800 py-2 px-4 border-r-4 ">
                 <div id="section-content" className="text-sm text-white">
                   <p className="py-2">{idx + 1}.</p>
                   <p className="py-2">
@@ -82,3 +84,5 @@ export const Posts = () => {
     </>
   );
 };
+
+export default Posts;

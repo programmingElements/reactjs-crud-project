@@ -14,7 +14,7 @@ const Form = ({data, setData, updateDataApi, setUpdateDataApi}) => {
       title: updateDataApi.title || "",
       body: updateDataApi.body || ""
     })
-  }, [updateDataApi])
+  }, [updateDataApi]);
 
   const updateInput = (e) => {
     setAddData(prevData => ({
@@ -24,9 +24,9 @@ const Form = ({data, setData, updateDataApi, setUpdateDataApi}) => {
   }
 
   const addPostData = async () => {
-    const response = await postData(addData);
+    const {data:response} = await postData(addData);
     console.log("Response", response);
-    if (response.status >= 200 && response.status <= 299) {
+    if (response.statusCode >= 200 && response.statusCode <= 299) {
       setData([...data, response.data ]);
       setAddData({title: "", body: ""});
     }
@@ -34,10 +34,10 @@ const Form = ({data, setData, updateDataApi, setUpdateDataApi}) => {
 
   const updatePostData = async () => {
     try {
-      const response = await updatePost(updateDataApi.id, addData);
+      const {data:response} = await updatePost(updateDataApi.id, addData);
       console.log("Response", response);
-      if (response.status >= 200 && response.status <= 299) {
-        setData((prevData) => prevData.map((curElem) => curElem.id === response.data.id ? response.data : curElem));   
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        setData((prevData) => prevData.map((curElem) => curElem._id === response.data._id ? response.data : curElem));   
         setAddData({title: "", body: ""});
         setUpdateDataApi({});
       }

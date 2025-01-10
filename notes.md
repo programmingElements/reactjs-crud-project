@@ -125,6 +125,34 @@ By using third party server like nginx, apache , httpd
 
      
 
+Deploy React App in Docker [ Docker Compose ]
+_____________________________________________
+
+Install Docker Compose Tool
+
+$ sudo yum update -y
+$ sudo yum install docker-compose-plugin -y
+
+$ cd reactjs-crud-app
+
+$ vim Dockerfile
+   
+   version: '3'
+
+   services:
+     crud-app:
+       build: .
+       ports:
+         - "3000:80"
+
+$ docker compose up
+
+$ docker compose -d up
+
+$ docker compose stop
+
+$ docker compose down
+
 
 
 
