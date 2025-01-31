@@ -1,6 +1,10 @@
 import React, {useState} from "react";
+import { registerUser } from "../api/UserApi";
+import { useNavigate } from "react-router";
 
 const Register = () => {
+
+  const navigate = useNavigate();
   const [registerForm, setRegisterForm] = useState({
     username: "",
     email: "",
@@ -9,24 +13,30 @@ const Register = () => {
   });
 
   const updateInput = (event) => {
-    // console.log(event);
-
     setRegisterForm({
       ...registerForm,
       [event.target.name]: event.target.value
     });
-    console.log({
-      username: registerForm.username,
-      email: registerForm.email,
-      fullname: registerForm.fullname
-    });
   }
 
-  // handle submit registration form
+  // handle register form
+
+  const onSubmitRegister = async (e) => {
+    try {
+      e.preventDefault();
+      const {data} = await registerUser(registerForm);
+      if (data.success) {
+        navigate("/signin")
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
   return <div className="border-2 rounded-lg p-4 my-10 w-[350px] bg-gray-600">
     <h2 className="font-bold text-blue-200 text-2xl text-center mb-2 uppercase">Registration Form</h2>
-    <form className="flex flex-col gap-2">
+    <form onSubmit={onSubmitRegister} className="flex flex-col gap-2">
       <div className="flex flex-col">
         <label className="text-sm text-white font-semibold" htmlFor="user-name">User Name</label>
         <input type="text" name="username" id="user-name" placeholder="Enter User Name" defaultValue={""}  className="py-2 px-4 rounded outline-none " onChange={updateInput} />

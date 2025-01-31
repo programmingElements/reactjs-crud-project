@@ -1,16 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { deletePost, getPost } from "../api/PostApi";
 import Form from "./Form";
+import Header from "./Header";
+import { UserContext } from "../context/UserContext";
+
 
 const Posts = () => {
   const [data, setData] = useState([]);
   const [updateDataApi, setUpdateDataApi] = useState({});
 
+  const {isLoggedIn, userData} = useContext(UserContext);
+
   const getPostData = async () => {
     const {data:response} = await getPost();
     if (response.statusCode == 200) {
-      console.log(response);
-      setData(response.data);
+        setData(response.data);
     }
   };
 
@@ -36,15 +40,26 @@ const Posts = () => {
     getPostData();
   }, []);
 
+  console.log(isLoggedIn, userData);
+
   return (
     <>
+
+       {
+        isLoggedIn && userData  && userData?.email && (<Header />)
+       }
+
       <section id="section-form" className="my-4">
-        <Form
+
+      {
+        isLoggedIn && userData && userData?.email && (<Form
           data={data}
           setData={setData}
           updateDataApi={updateDataApi}
           setUpdateDataApi={setUpdateDataApi}
-        />
+        />)
+      }
+          
       </section>
       <section id="section-post" className="w-[90%] my-4">
         <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -60,7 +75,9 @@ const Posts = () => {
                     <b>News:</b> {body}
                   </p>
                 </div>
-                <div id="section-btn" className="flex gap-2 py-2">
+                {
+                  isLoggedIn && userData && userData?.email && (
+                    <div id="section-btn" className="flex gap-2 py-2">
                   <button
                     id="btn-edit"
                     className="bg-green-600 px-2 py-1 rounded hover:text-white"
@@ -76,6 +93,8 @@ const Posts = () => {
                     Delete
                   </button>
                 </div>
+                  )
+                }
               </li>
             );
           })}
